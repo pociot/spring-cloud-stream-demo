@@ -1,0 +1,1 @@
+This project will contain some snippets for spring-cloud-stream.
