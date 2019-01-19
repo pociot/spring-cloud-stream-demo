@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: spring-cloud-stream-demo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bindings
+
+spring.cloud.stream.kafka.binder.configuration:
+  commit.interval.mms: 1000
+  default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+  default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+spring.cloud.stream.bindings.input:
+  destination: some-topic
+  group: inputGroup
+  consumer:
+    header-mode: raw
+
+spring.cloud.stream.bindings.output:
+  destination: some-topic
+  group: outputGroup
+  content-type: application/json
+  producer:
+    header-mode: raw
