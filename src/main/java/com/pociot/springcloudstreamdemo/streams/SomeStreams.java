@@ -1,6 +1,8 @@
 package com.pociot.springcloudstreamdemo.streams;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.kafka.streams.kstream.KStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,14 +49,14 @@ public class SomeStreams {
   @Bean
   @ServiceActivator(inputChannel = ROUTER_CHANNEL)
   public MethodInvokingRouter router() throws NoSuchMethodException {
-    SingleChannelNameRoutingTestBean testBean = new SingleChannelNameRoutingTestBean();
+    SingleChannelNameRoutingBean testBean = new SingleChannelNameRoutingBean();
     Method routingMethod = testBean.getClass().getMethod("routePayload", String.class);
     MethodInvokingRouter router = new MethodInvokingRouter(testBean, routingMethod);
     router.setChannelResolver(resolver);
     return router;
   }
 
-  public static class SingleChannelNameRoutingTestBean {
+  public static class SingleChannelNameRoutingBean {
 
     public String routePayload(String name) {
       log.info("routePayload() - name: {}", name);
@@ -74,6 +76,36 @@ public class SomeStreams {
       }
       return null;
     }
+  }
 
+  public static class MultiChannelNameRoutingBean {
+
+    public List<String> routePayload(String name) {
+      List<String> results = new ArrayList<String>();
+      if (name.equals("foo") || name.equals("bar")) {
+        results.add("foo-channel");
+        results.add("bar-channel");
+      }
+      return results;
+    }
+
+    public List<String> routeMessage(Message<?> message) {
+      List<String> results = new ArrayList<String>();
+      if (message.getPayload().equals("foo") || message.getPayload().equals("bar")) {
+        results.add("foo-channel");
+        results.add("bar-channel");
+      }
+      return results;
+    }
+
+    public String[] routeMessageToArray(Message<?> message) {
+      String[] results = null;
+      if (message.getPayload().equals("foo") || message.getPayload().equals("bar")) {
+        results = new String[2];
+        results[0] = "foo-channel";
+        results[1] = "bar-channel";
+      }
+      return results;
+    }
   }
 }
