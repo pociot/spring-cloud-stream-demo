@@ -7,12 +7,16 @@ import org.springframework.messaging.MessageChannel;
 
 public interface SomeBindings {
 
-  final String INPUT = "input";
-  final String OUTPUT = "output";
+  String INPUT = "input";
+  String OUTPUT = "output";
+  String SECOND_INPUT = "secondInput";
 
   @Input(INPUT)
   KStream<String, String> input();
 
   @Output(OUTPUT)
   MessageChannel output();
+
+  @Input(SECOND_INPUT)
+  KStream<String, String> secondInput();
 }

@@ -24,7 +24,7 @@ public class EventSource implements ApplicationRunner {
   public void run(ApplicationArguments args) {
     Runnable runnable = () -> out
         .send(MessageBuilder
-            .withPayload(ThreadLocalRandom.current().nextInt(2) == 0 ? "first-topic" : "second-topic")
+            .withPayload("" + ThreadLocalRandom.current().nextInt())
             .build()
         );
     Executors.newSingleThreadScheduledExecutor()

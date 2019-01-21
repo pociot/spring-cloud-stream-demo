@@ -15,14 +15,6 @@ spring.cloud.stream.kafka.binder:
     default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
-#spring.cloud.stream.kafka.binder.producer-properties:
-#  key.serializer: org.apache.kafka.common.serialization.StringSerializer
-#  value.serializer: org.apache.kafka.common.serialization.StringSerializer
-
-#spring.cloud.stream.kafka.binder.consumer-properties:
-#  key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#  value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-
 # default kafka streams binder configuration
 spring.cloud.stream.kafka.streams.binder.configuration:
   default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
@@ -32,16 +24,10 @@ spring.cloud.stream.kafka.streams.binder.configuration:
 # generic binder configuration
 spring.cloud.stream.bindings.input:
   destination: some-topic
-  group: inputGroup
-  content-type: application/json
+  group: firstGroup
   consumer:
     header-mode: raw
     useNativeDecoding: true
-# kafka binder configuration
-spring.cloud.stream.kafka.bindings.input:
-  consumer.configuration:
-    key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
 # kafka stream binder configuration
 spring.cloud.stream.kafka.streams.bindings.input:
   consumer:
@@ -49,9 +35,21 @@ spring.cloud.stream.kafka.streams.bindings.input:
     key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
 # generic binder configuration
+spring.cloud.stream.bindings.secondInput:
+  destination: some-topic
+  group: secondGroup
+  consumer:
+    header-mode: raw
+    useNativeDecoding: true
+# kafka stream binder configuration
+spring.cloud.stream.kafka.streams.bindings.secondInput:
+  consumer:
+    value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+# generic binder configuration
 spring.cloud.stream.bindings.output:
   destination: some-topic
-  group: outputGroup
   producer:
     header-mode: raw
     useNativeEncoding: true
@@ -60,8 +58,3 @@ spring.cloud.stream.kafka.bindings.output:
   producer.configuration:
     key.serializer: org.apache.kafka.common.serialization.StringSerializer
     value.serializer: org.apache.kafka.common.serialization.StringSerializer
-# kafka stream binder configuration
-spring.cloud.stream.kafka.streams.bindings.output:
-  producer:
-    value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-    key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
