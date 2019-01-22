@@ -31,6 +31,8 @@ spring.cloud.stream.bindings.input:
 # kafka stream binder configuration
 spring.cloud.stream.kafka.streams.bindings.input:
   consumer:
+    applicationId: first-group
+    useNativeDecoding: true
     value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
@@ -44,6 +46,8 @@ spring.cloud.stream.bindings.secondInput:
 # kafka stream binder configuration
 spring.cloud.stream.kafka.streams.bindings.secondInput:
   consumer:
+    applicationId: second-group
+    useNativeDecoding: true
     value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
