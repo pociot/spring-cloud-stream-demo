@@ -30,9 +30,9 @@ public class SpringCloudStreamDemoApplication {
 			Map<String, String> extendedProps = new HashMap<>();
 			extendedProps.put("key.serializer", StringSerializer.class.getName());
 			extendedProps.put("value.serializer", StringSerializer.class.getName());
+			extendedProps.put("client.id", name + UUID.randomUUID().toString());
 			extended.setConfiguration(extendedProps);
 			log.info("Dynamic configurer - name:{}, channel:{}, props:{}", name, channel, props);
-			extended.setConfiguration(Collections.singletonMap("client.id", name + UUID.randomUUID().toString()));
 		};
 	}
 }
