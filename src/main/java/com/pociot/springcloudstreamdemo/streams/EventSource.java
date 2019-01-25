@@ -16,6 +16,7 @@ public class EventSource implements ApplicationRunner {
 
   private final MessageChannel out;
 
+  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
   public EventSource(SomeBindings myBindings) {
     this.out = myBindings.output();
   }

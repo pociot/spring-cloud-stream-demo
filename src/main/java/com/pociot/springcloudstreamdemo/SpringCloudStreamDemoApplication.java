@@ -25,8 +25,6 @@ public class SpringCloudStreamDemoApplication {
 	@Bean
 	public NewDestinationBindingCallback<KafkaProducerProperties> dynamicConfigurer() {
 		return (name, channel, props, extended) -> {
-			props.setHeaderMode(HeaderMode.raw);
-			props.setUseNativeEncoding(true);
 			Map<String, String> extendedProps = new HashMap<>();
 			extendedProps.put("key.serializer", StringSerializer.class.getName());
 			extendedProps.put("value.serializer", StringSerializer.class.getName());

@@ -7,7 +7,6 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.binding.BinderAwareChannelResolver;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +16,7 @@ import org.springframework.integration.router.MethodInvokingRouter;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
@@ -38,18 +38,27 @@ public class SomeStreams {
     return new DirectChannel();
   }
 
-  @StreamListener
-  public void process(@Input(SomeBindings.INPUT) KStream<String, String> stream) {
+  @StreamListener(SomeBindings.INPUT)
+  public void processFirst(KStream<String, String> stream) {
     stream.foreach((key, value) -> {
-      log.info("Process - value: {}", value);
+      log.info("Process first - value: {}", value);
       routerChannel().send(MessageBuilder.withPayload(value).build());
+    });
+  }
+
+  @StreamListener(SomeBindings.SECOND_INPUT)
+  @SendTo(SomeBindings.OTHER_OUTPUT)
+  public KStream<String, String> process(KStream<String, String> stream) {
+    return stream.mapValues((value) -> {
+      log.info("Process - value: {}", value);
+      return value.toUpperCase();
     });
   }
 
   @Bean
   @ServiceActivator(inputChannel = ROUTER_CHANNEL)
   public MethodInvokingRouter router() throws NoSuchMethodException {
-    SingleChannelNameRoutingBean testBean = new SingleChannelNameRoutingBean();
+    MultiChannelNameRoutingBean testBean = new MultiChannelNameRoutingBean();
     Method routingMethod = testBean.getClass().getMethod("routePayload", String.class);
     MethodInvokingRouter router = new MethodInvokingRouter(testBean, routingMethod);
     router.setChannelResolver(resolver);
@@ -82,9 +91,11 @@ public class SomeStreams {
 
     public List<String> routePayload(String name) {
       List<String> results = new ArrayList<String>();
-      if (name.equals("foo") || name.equals("bar")) {
-        results.add("foo-channel");
-        results.add("bar-channel");
+      if (name.equals("first-topic")) {
+        results.add("first-topic-channel");
+        results.add("second-topic-channel");
+      } else {
+        results.add("second-topic-channel");
       }
       return results;
     }

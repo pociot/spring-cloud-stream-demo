@@ -9,9 +9,9 @@ management:
         include: bindings
 
 # default kafka binder configuration
-spring.cloud.stream.kafka.binder:
-  configuration:
-    commit.interval.mms: 100
+#spring.cloud.stream.kafka.binder:
+#  configuration:
+#    commit.interval.mms: 100
 #    default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 #    default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
@@ -48,7 +48,29 @@ spring.cloud.stream.bindings.input:
 # kafka stream binder configuration
 spring.cloud.stream.kafka.streams.bindings.input:
   consumer:
+    application-id: input
     use-native-decoding: true
+    value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+spring.cloud.stream.bindings.secondInput:
+  destination: some-topic
+spring.cloud.stream.kafka.streams.bindings.secondInput:
+  consumer:
+    application-id: second-input
+    use-native-decoding: true
+    value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+    key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+spring.cloud.stream.bindings.otherOutput:
+  destination: differentTopic
+  producer:
+    header-mode: headers
+    useNativeEncoding: true
+# kafka binder configuration
+spring.cloud.stream.kafka.streams.bindings.otherOutput:
+  producer:
+    use-native-encoding: true
     value-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
     key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
 
@@ -57,7 +79,7 @@ spring.cloud.stream.bindings.output:
   destination: some-topic
   group: outputGroup
   producer:
-    header-mode: raw
+    header-mode: headers
     useNativeEncoding: true
 # kafka binder configuration
 spring.cloud.stream.kafka.bindings.output:
