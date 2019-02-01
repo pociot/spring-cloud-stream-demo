@@ -64,8 +64,9 @@ public class DynamicBinderConfiguration {
 
   public static class MultiChannelNameRoutingBean {
 
+    @SuppressWarnings("WeakerAccess")
     public List<String> routePayload(String name) {
-      List<String> results = new ArrayList<String>();
+      List<String> results = new ArrayList<>();
       if (name.equals("first-topic")) {
         results.add("first-topic-channel");
         results.add("second-topic-channel");
@@ -76,7 +77,7 @@ public class DynamicBinderConfiguration {
     }
 
     public List<String> routeMessage(Message<?> message) {
-      List<String> results = new ArrayList<String>();
+      List<String> results = new ArrayList<>();
       if (message.getPayload().equals("foo") || message.getPayload().equals("bar")) {
         results.add("foo-channel");
         results.add("bar-channel");
