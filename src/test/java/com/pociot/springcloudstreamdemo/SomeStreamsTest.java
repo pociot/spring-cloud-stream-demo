@@ -13,23 +13,23 @@ import org.apache.kafka.streams.TopologyTestDriver;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.test.ConsumerRecordFactory;
 import org.apache.kafka.streams.test.OutputVerifier;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class SomeStreamsTest {
+class SomeStreamsTest {
 
   private final Logger log = LoggerFactory.getLogger(SomeStreamsTest.class);
 
   private ConsumerRecordFactory<String, String> factory = new ConsumerRecordFactory<>(new StringSerializer(), new StringSerializer());
   private TopologyTestDriver topologyTestDriver;
 
-  @Before
-  public void testStream() {
-    SomeStreams someStreams = new SomeStreams(null);
+  @BeforeEach
+  void testStream() {
+    SomeStreams someStreams = new SomeStreams();
 
     StreamsBuilder builder = new StreamsBuilder();
     KStream<String,String> stream = builder.stream("input-topic");
@@ -44,19 +44,16 @@ public class SomeStreamsTest {
     this.topologyTestDriver = new TopologyTestDriver(topology, props);
   }
 
-  @After
-  public void tearDown() {
+  @AfterEach
+  void tearDown() {
     this.topologyTestDriver.close();
   }
 
   @Test
-  public void doTest() {
+  void doTest() {
     topologyTestDriver.pipeInput(factory.create("input-topic","key", "some-message"));
     ProducerRecord<String, String> outputRecord = topologyTestDriver.readOutput("output-topic", new StringDeserializer(), new StringDeserializer());
     log.info("Output value: {}", outputRecord.value());
     OutputVerifier.compareValue(outputRecord, "SOME-MESSAGE");
-
   }
-
-
 }
