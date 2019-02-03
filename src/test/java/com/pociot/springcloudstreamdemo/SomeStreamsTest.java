@@ -13,22 +13,22 @@ import org.apache.kafka.streams.TopologyTestDriver;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.test.ConsumerRecordFactory;
 import org.apache.kafka.streams.test.OutputVerifier;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-class SomeStreamsTest {
+public class SomeStreamsTest {
 
   private final Logger log = LoggerFactory.getLogger(SomeStreamsTest.class);
 
   private ConsumerRecordFactory<String, String> factory = new ConsumerRecordFactory<>(new StringSerializer(), new StringSerializer());
-  private TopologyTestDriver topologyTestDriver;
+  private static TopologyTestDriver topologyTestDriver;
 
-  @BeforeEach
-  void testStream() {
+  @BeforeClass
+  public static void testStream() {
     SomeStreams someStreams = new SomeStreams();
 
     StreamsBuilder builder = new StreamsBuilder();
@@ -41,16 +41,16 @@ class SomeStreamsTest {
     props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
     props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
     props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde.class);
-    this.topologyTestDriver = new TopologyTestDriver(topology, props);
+    topologyTestDriver = new TopologyTestDriver(topology, props);
   }
 
-  @AfterEach
-  void tearDown() {
-    this.topologyTestDriver.close();
+  @AfterClass
+  public static void tearDown() {
+    topologyTestDriver.close();
   }
 
   @Test
-  void doTest() {
+  public void doTest() {
     topologyTestDriver.pipeInput(factory.create("input-topic","key", "some-message"));
     ProducerRecord<String, String> outputRecord = topologyTestDriver.readOutput("output-topic", new StringDeserializer(), new StringDeserializer());
     log.info("Output value: {}", outputRecord.value());
